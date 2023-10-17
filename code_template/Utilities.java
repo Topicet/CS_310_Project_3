@@ -56,6 +56,17 @@ public final class Utilities
     */
     public static boolean verifyTransaction(Transaction t, SinglyLinkedList<String> proof, String blockRootHash)
     {
+        String transactionHash = cryptographicHashFunction(t.toString());
+
+        //Reconstruct the merkle tree
+        for(String proofHash : proof){
+            String totalHash = transactionHash + proofHash;
+
+            transactionHash = cryptographicHashFunction(totalHash);
+        }
+
+        return transactionHash.equals(blockRootHash);
+
     }
 
     /**

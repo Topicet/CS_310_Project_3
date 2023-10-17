@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 /**
     - Implements a singly linked list.
     - You must implement all the public methods in this template plus the method(s) required by the Iterable interface
@@ -58,5 +60,11 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     */
     public boolean isEmpty()
     {
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
     }
 }
