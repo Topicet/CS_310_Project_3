@@ -64,7 +64,7 @@ public final class Utilities
 
             transactionHash = cryptographicHashFunction(totalHash);
         }
-
+                
         return transactionHash.equals(blockRootHash);
 
     }

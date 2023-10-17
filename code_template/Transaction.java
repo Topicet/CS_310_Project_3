@@ -11,6 +11,15 @@ public class Transaction implements Comparable<Transaction>
     private int amount;
     private int fee;
     
+
+    /**
+     * Constructs a Transaction object with the specified attributes.
+     *
+     * @param sender   The sender's name or identifier.
+     * @param receiver The receiver's name or identifier.
+     * @param amount   The amount of the transaction.
+     * @param fee      The fee associated with the transaction.
+     */
     public Transaction(String sender, String receiver, int amount, int fee)
     {
         this.sender = sender;
@@ -19,13 +28,39 @@ public class Transaction implements Comparable<Transaction>
         this.fee = fee;
     }
 
+    /**
+     * Returns a formatted string representation of the Transaction object.
+     *
+     * @return A string containing sender, receiver, amount, and fee.
+     */
     public String toString()
     {
         return String.format("%s %s %d %d", sender, receiver, amount, fee);
     }
 
+    /**
+     * Gets the fee associated with the transaction.
+     *
+     * @return The fee value.
+     */
     public int getFee()
     {
         return fee;
+    }
+    
+    /**
+     * Compares this Transaction with another Transaction based on their fees.
+     *
+     * @param otherTransaction The Transaction to compare to.
+     * @return 1 if this transaction has a higher fee, -1 if the other transaction has a higher fee, 0 if they have the same fee.
+     */
+    @Override
+    public int compareTo(Transaction otherTransaction) {
+
+        if(this.fee > otherTransaction.getFee())  return 1;           
+        
+        if(this.fee < otherTransaction.getFee()) return -1;
+
+        return 0;        
     }
 }
