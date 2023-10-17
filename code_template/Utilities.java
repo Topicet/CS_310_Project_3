@@ -14,6 +14,36 @@ public final class Utilities
     */
     public static PriorityLine<Transaction> loadTransactions(String pgmFile)
     {
+        PriorityLine<Transaction> priorityLine = new PriorityLine<>();
+        
+        try{
+            File file = new File(pgmFile);
+            Scanner scanner = new Scanner(file);
+
+
+            //Read the file
+            while(scanner.hasNextLine()){
+                String line = scanner.nextLine();
+                String[] transactionInfo = line.split(" ");
+
+                //Store the transaction information.
+                String sender = transactionInfo[0];
+                String reciever = transactionInfo[1];
+                int amount = Integer.parseInt(transactionInfo[2]);
+                int fee = Integer.parseInt(transactionInfo[3]);
+
+                Transaction newTransaction = new Transaction(sender, reciever, amount, fee);
+
+                priorityLine.enqueue(newTransaction);
+            }
+
+            scanner.close();
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+
+        return priorityLine;
     }
 
     /**
