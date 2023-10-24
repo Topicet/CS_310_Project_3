@@ -1,3 +1,7 @@
+import java.util.Iterator;
+
+import javax.swing.SingleSelectionModel;
+
 /**
     - Represents a single block in the blockchain
     - You must implement all the public methods in this template plus the methods required by the Comparable and Iterable interfaces
@@ -8,8 +12,11 @@
 
 public class Block implements Comparable<Block>, Iterable<Transaction>
 {
+    private SinglyLinkedList blockList;
+
     public Block()
     {
+        blockList = new SinglyLinkedList<Transaction>();
     }
 
     /**
@@ -17,6 +24,7 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     */
     public void addTransaction(Transaction t)
     {
+        blockList.add(t);
     }
 
     /**
@@ -38,5 +46,17 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     */
     public void setRootHash(String hashCode)
     {
+    }
+
+    @Override
+    public Iterator<Transaction> iterator() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+    }
+
+    @Override
+    public int compareTo(Block o) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
     }
 }
