@@ -7,6 +7,23 @@
 
 public class MerkleTree
 {
+
+    private Node root; // Reference to the root node
+    private int height; // Height of the tree
+    private int innerNodes; // Number of inner nodes
+
+    private static class Node {
+        String hashCode; // The hash code stored in this node
+        Node left; // Left child
+        Node right; // Right child
+
+        Node(String hashCode) {
+            this.hashCode = hashCode;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
     /**
         @param block is the Block that the Merkle Tree will be created for
         
@@ -21,6 +38,68 @@ public class MerkleTree
     */
     public MerkleTree(Block block)
     {
+            // Initialize innerNodes and height
+            this.innerNodes = 0;
+            this.height = 0;
+    
+            // Create the Merkle Tree and set the root
+            this.root = buildTree(block);
+    
+            // Set the root hash for the block
+            block.setRootHash(this.root.hashCode);
+    }
+
+    private Node buildTree(Block block) {
+        Iterator<Transaction> iter = block.iterator();
+        return buildTreeHelper(iter, block.numOfTransactions());
+    }
+
+    private Node buildTreeHelper(Iterator<Transaction> iter, int size, int totalSize) {
+        if (size == 1) {
+            String hashCode;
+            if(iter.hasNext()) {
+                Transaction transaction = iter.next();
+                hashCode = Utilities.cryptographicHashFunction(transaction.toString());
+            } else {
+                // Use "DUMMY" hash for padding
+                hashCode = Utilities.cryptographicHashFunction("DUMMY");
+            }
+            return new Node(hashCode);
+        }
+    
+        this.height++;
+    
+        int nextPowOfTwo = nextPowerOfTwo(totalSize);  // Function to find the next power of two
+        int halfSize = nextPowOfTwo / 2;
+    
+        Node left = buildTreeHelper(iter, Math.min(halfSize, size), totalSize);
+        Node right = buildTreeHelper(iter, Math.min(halfSize, size - halfSize), totalSize);
+    
+        String combinedHashCode = Utilities.cryptographicHashFunction(left.hashCode, right.hashCode);
+    
+        Node parent = new Node(combinedHashCode);
+        parent.left = left;
+        parent.right = right;
+    
+        this.innerNodes++;
+    
+        return parent;
+    }
+    
+    // Function to find the next power of two greater than or equal to n
+    private int nextPowerOfTwo(int n) {
+        int count = 0;
+    
+        // First n in the below condition is for the case where n is 0
+        if (n > 0 && (n & (n - 1)) == 0)
+            return n;
+    
+        while( n != 0) {
+            n >>= 1;
+            count += 1;
+        }
+    
+        return 1 << count;
     }
 
     /**
