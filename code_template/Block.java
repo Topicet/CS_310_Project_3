@@ -12,11 +12,13 @@ import javax.swing.SingleSelectionModel;
 
 public class Block implements Comparable<Block>, Iterable<Transaction>
 {
-    private SinglyLinkedList blockList;
+    private SinglyLinkedList<Transaction> blockList;
+    private String rootHash;
 
     public Block()
     {
-        blockList = new SinglyLinkedList<Transaction>();
+        blockList = new SinglyLinkedList<>();
+        rootHash = "";
     }
 
     /**
@@ -32,6 +34,7 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     */
     public int numOfTransactions()
     {
+        return this.blockList.size();
     }
 
     /**
@@ -39,6 +42,7 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     */
     public String getRootHash()
     {
+        return rootHash;
     }
 
     /**
@@ -46,17 +50,16 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     */
     public void setRootHash(String hashCode)
     {
+        this.rootHash = hashCode;
     }
 
     @Override
     public Iterator<Transaction> iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+        return blockList.iterator();
     }
 
     @Override
     public int compareTo(Block o) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+        return Integer.compare(this.numOfTransactions(), o.numOfTransactions());
     }
 }

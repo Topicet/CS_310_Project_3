@@ -22,7 +22,6 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
         }
     }
 
-
     public SinglyLinkedList()
     {
         this.head = null;
@@ -31,10 +30,12 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     }
 
     /**
-        adds a value to the end of the list
-
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+     * Adds a value to the end of the list.
+     *
+     * @param value The value to be added.
+     *
+     * @TimeComplexityRequirement O(1)
+     */
     public void add(T value)
     {
         Node newNode = new Node(value);
@@ -50,10 +51,13 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     }
 
     /**
-        Inserts a value to the proper location in the list so that the list order is preserved (in descending order)
-
-        TIME COMPLEXITY REQUIREMENT: O(N)
-    */
+     * Inserts a value into the list in descending order.
+     * The list order is preserved.
+     *
+     * @param newValue The value to be inserted.
+     *
+     * @TimeComplexityRequirement O(N)
+     */
     public void insert(T newValue)
     {
         Node newNode = new Node(newValue);
@@ -85,10 +89,14 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     }
 
     /**
-        Removes a single item from the list based on its index
-
-        TIME COMPLEXITY REQUIREMENT: O(N)
-    */
+     * Removes a single item from the list based on its index.
+     *
+     * @param index The index of the item to be removed.
+     * @return The removed item.
+     * @throws IndexOutOfBoundsException if the index is out of bounds.
+     *
+     * @TimeComplexityRequirement O(N)
+     */
     public T remove(int index)
     {
         if (index >= size || index < 0) {
@@ -131,10 +139,14 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     }
 
     /**
-        Returns (without removing) a single item from the list based on its index
-
-        TIME COMPLEXITY REQUIREMENT: O(N)
-    */
+     * Returns (without removing) a single item from the list based on its index.
+     *
+     * @param index The index of the item to be retrieved.
+     * @return The item at the specified index.
+     * @throws IndexOutOfBoundsException if the index is out of bounds.
+     *
+     * @TimeComplexityRequirement O(N)
+     */
     public T get(int index)
     {
         if (index >= size || index < 0) {
@@ -148,21 +160,34 @@ public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+     * Gets the size of the list.
+     *
+     * @return The number of elements in the list.
+     *
+     * @TimeComplexityRequirement O(1)
+     */
     public int size()
     {
         return this.size;
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+     * Checks if the list is empty.
+     *
+     * @return true if the list is empty, false otherwise.
+     *
+     * @TimeComplexityRequirement O(1)
+     */
     public boolean isEmpty()
     {
         return this.size == 0;
     }
 
+    /**
+     * Returns an iterator to traverse the elements in the list.
+     *
+     * @return An iterator for the list.
+     */
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
