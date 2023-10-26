@@ -7,19 +7,21 @@ public class P3
 {
     public static void main(String[] args)
     {
-        if(args.length != 2)
+        String[] args1 = {"code_template\\transactions_example____sender_receiver_amount_fee.txt","20"};
+
+        if(args1.length != 2)
         {
             System.err.println("Usage: java P3 <filename> <cumulative fee threshold>");
             return;
         }
 
-        PriorityLine<Transaction> pq = Utilities.loadTransactions(args[0]);
+        PriorityLine<Transaction> pq = Utilities.loadTransactions(args1[0]);
 
         System.out.println("\nContents of the priority queue:");
         for(Transaction t : pq)
             System.out.println(t);
 
-        Blockchain chain = new Blockchain(pq, Integer.parseInt(args[1]));
+        Blockchain chain = new Blockchain(pq, Integer.parseInt(args1[1]));
 
         int count = 1;
         for(Block b : chain)

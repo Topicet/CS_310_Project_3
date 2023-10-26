@@ -23,15 +23,21 @@ public class Blockchain implements Iterable<Block>
     public Blockchain(PriorityLine<Transaction> queue, int threshold)
     {
         blockchainList = new SinglyLinkedList<>();
+        int cumulativeFees = 0;
+        Block currentBlockTransactions = new Block();
 
-        // Building the blockchain from the priority queue
-        // (you may need to add more logic based on the exact requirements)
         while (!queue.isEmpty()) {
-            Block newBlock = new Block();
-            // Logic to add transactions from priorityQueue to the block
-            // until reaching some criteria (e.g., a certain number of transactions,
-            // or a certain amount of transaction fees)
-            blockchainList.add(newBlock);
+            Transaction currentTransaction = queue.dequeue();
+            cumulativeFees += currentTransaction.getFee();
+            currentBlockTransactions.addTransaction(currentTransaction);
+    
+            if (cumulativeFees >= threshold) {
+                blockchainList.add(currentBlockTransactions);
+    
+                // Reset for next block
+                cumulativeFees = 0;
+                currentBlockTransactions = new Block();
+            }
         }
     }
 
