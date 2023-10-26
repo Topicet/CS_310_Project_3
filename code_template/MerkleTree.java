@@ -1,3 +1,7 @@
+import java.util.Iterator;
+
+import org.w3c.dom.Node;
+
 /**
     - Represents the Merkle Tree of a single Block
     - You must implement all the public methods in this template
@@ -12,7 +16,7 @@ public class MerkleTree
     private int height; // Height of the tree
     private int innerNodes; // Number of inner nodes
 
-    private static class Node {
+    private static class Node implements Comparable<Node>  {
         String hashCode; // The hash code stored in this node
         Node left; // Left child
         Node right; // Right child
@@ -22,17 +26,17 @@ public class MerkleTree
             this.left = null;
             this.right = null;
         }
+
+        public int compareTo(Node other) {
+            return this.hashCode.compareTo(other.hashCode);
+        }
     }
 
     /**
-        @param block is the Block that the Merkle Tree will be created for
-        
-        - The constructor first creates the Merkle Tree in memory. This MUST be done recursively; zero points if it's not recursive!
-        
+        @param block is the Block that the Merkle Tree will be created for        
+        - The constructor first creates the Merkle Tree in memory. This MUST be done recursively; zero points if it's not recursive!        
         - You MUST maintain a pointer to the root because the tree is built only once but it's needed many times (e.g. for traversals)
-
         - After the tree is constructed, the constructor sends the hash of the root to the block object by invoking the block.setRootHash() method
-
         TIME COMPLEXITY REQUIREMENT: O(N)
         SPACE COMPLEXITY REQUIREMENT: O(N)        
     */
@@ -54,7 +58,7 @@ public class MerkleTree
         return buildTreeHelper(iter, block.numOfTransactions());
     }
 
-    private Node buildTreeHelper(Iterator<Transaction> iter, int size, int totalSize) {
+    private Node buildTreeHelper(Iterator<Transaction> iter, int size) {
         if (size == 1) {
             String hashCode;
             if(iter.hasNext()) {
@@ -69,11 +73,11 @@ public class MerkleTree
     
         this.height++;
     
-        int nextPowOfTwo = nextPowerOfTwo(totalSize);  // Function to find the next power of two
+        int nextPowOfTwo = nextPowerOfTwo(size);  // Function to find the next power of two
         int halfSize = nextPowOfTwo / 2;
     
-        Node left = buildTreeHelper(iter, Math.min(halfSize, size), totalSize);
-        Node right = buildTreeHelper(iter, Math.min(halfSize, size - halfSize), totalSize);
+        Node left = buildTreeHelper(iter, Math.min(halfSize, size));
+        Node right = buildTreeHelper(iter, Math.min(halfSize, size - halfSize));
     
         String combinedHashCode = Utilities.cryptographicHashFunction(left.hashCode, right.hashCode);
     
@@ -104,42 +108,84 @@ public class MerkleTree
 
     /**
         @return the height of the tree
-
         TIME COMPLEXITY REQUIREMENT: O(1)
     */
     public int height()
     {
+        return this.height;
     }
 
     /**
         @return the number of inner nodes in the tree
-
         TIME COMPLEXITY REQUIREMENT: O(1)
     */
     public int innerNodes()
     {
+        return this.innerNodes;
     }
 
     /**
         @return a list of the hash codes contained in the tree by walking the tree in a level-order
-
         TIME COMPLEXITY REQUIREMENT: O(N)
     */
-    public SinglyLinkedList<String> breadthFirstTraversal()
-    {
+    public SinglyLinkedList<String> breadthFirstTraversal() {
+        SinglyLinkedList<String> hashCodes = new SinglyLinkedList<>();
+        SinglyLinkedList<Node> nodeQueue = new SinglyLinkedList<>(); // Using it like a queue
+        
+        if (root != null) {
+            nodeQueue.add(root);
+        }
+        
+        while (nodeQueue.size() > 0) {
+            Node currentNode = nodeQueue.remove(0); // Dequeue the front node
+            hashCodes.add(currentNode.hashCode);
+            
+            if (currentNode.left != null) {
+                nodeQueue.add(currentNode.left); // Enqueue left child
+            }
+            
+            if (currentNode.right != null) {
+                nodeQueue.add(currentNode.right); // Enqueue right child
+            }
+        }
+        
+        return hashCodes;
     }
 
     /**
-        @return a list of the hash codes contained in the tree by walking the tree in a certain order
-        
-        @param order is an enumeration representing the three possible depth-first traversals
-        
+        @return a list of the hash codes contained in the tree by walking the tree in a certain order        
+        @param order is an enumeration representing the three possible depth-first traversals        
         You MUST use recursion for this method; zero points if it's not recursive!
-
         TIME COMPLEXITY REQUIREMENT: O(N)
     */
-    public SinglyLinkedList<String> depthFirstTraversal(Order order)
-    {
+    public SinglyLinkedList<String> depthFirstTraversal(Order order) {
+        SinglyLinkedList<String> hashCodes = new SinglyLinkedList<>();
+        depthFirstTraversalHelper(root, hashCodes, order);
+        return hashCodes;
+    }
+    
+    private void depthFirstTraversalHelper(Node node, SinglyLinkedList<String> list, Order order) {
+        if (node == null) {
+            return;
+        }
+        
+        switch (order) {
+            case PREORDER:
+                list.add(node.hashCode);
+                depthFirstTraversalHelper(node.left, list, order);
+                depthFirstTraversalHelper(node.right, list, order);
+                break;
+            case INORDER:
+                depthFirstTraversalHelper(node.left, list, order);
+                list.add(node.hashCode);
+                depthFirstTraversalHelper(node.right, list, order);
+                break;
+            case POSTORDER:
+                depthFirstTraversalHelper(node.left, list, order);
+                depthFirstTraversalHelper(node.right, list, order);
+                list.add(node.hashCode);
+                break;
+        }
     }
 
     /**
@@ -152,8 +198,36 @@ public class MerkleTree
 
         TIME COMPLEXITY REQUIREMENT: O(N)
     */
-    public SinglyLinkedList<String> extractProof(Transaction t)
-    {
+    public SinglyLinkedList<String> extractProof(Transaction t) {
+        SinglyLinkedList<String> proofList = new SinglyLinkedList<>();
+        extractProofHelper(root, t.toString(), proofList);
+        return proofList;
+    }
+    
+    private boolean extractProofHelper(Node node, String transactionHash, SinglyLinkedList<String> proofList) {
+        if (node == null) {
+            return false;
+        }
+        
+        if (node.hashCode.equals(transactionHash)) {
+            return true;
+        }
+        
+        if (extractProofHelper(node.left, transactionHash, proofList)) {
+            if (node.right != null) {
+                proofList.add(node.right.hashCode);
+            }
+            return true;
+        }
+        
+        if (extractProofHelper(node.right, transactionHash, proofList)) {
+            if (node.left != null) {
+                proofList.add(node.left.hashCode);
+            }
+            return true;
+        }
+        
+        return false;
     }
 
 }
