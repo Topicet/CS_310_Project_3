@@ -7,12 +7,22 @@ import java.util.Iterator;
     - Do not modify the provided signatures
     - Comparison between two blocks is based on the number of transactions they contain. The block that has more transactions is considered larger
 */
-
 public class Block implements Comparable<Block>, Iterable<Transaction>
 {
+
+    /**
+     * The list of transactions stored in this block.
+     */
     private SinglyLinkedList<Transaction> blockList;
+
+    /**
+     * The root hash of this block, representing the Merkle tree's root hash.
+     */
     private String rootHash;
 
+    /**
+     * Constructs an empty block with no transactions and an empty root hash.
+     */
     public Block()
     {
         blockList = new SinglyLinkedList<>();
@@ -20,7 +30,8 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
+        TIME COMPLEXITY REQUIREMENT: O(1).
+        @param t The transaction that will be added to this block.
     */
     public void addTransaction(Transaction t)
     {
@@ -28,24 +39,27 @@ public class Block implements Comparable<Block>, Iterable<Transaction>
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+      * Returns the number of transactions in this block.
+      * @return The number of transactions in the block.
+      */
     public int numOfTransactions()
     {
         return this.blockList.size();
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+     * Gets the root hash of this block, representing the Merkle tree's root hash.
+     * @return The root hash of the block.
+     */
     public String getRootHash()
     {
         return rootHash;
     }
 
     /**
-        TIME COMPLEXITY REQUIREMENT: O(1)
-    */
+     * Sets the root hash of this block to the specified hash code.
+     * @param hashCode The new root hash to set.
+     */
     public void setRootHash(String hashCode)
     {
         this.rootHash = hashCode;
