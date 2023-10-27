@@ -6,9 +6,25 @@
 */
 public class Transaction implements Comparable<Transaction>
 {
+    
+    /**
+     * The sender's name or identifier.
+     */
     private String sender;
+
+    /**
+     * The receiver's name or identifier.
+     */
     private String receiver;
+
+    /**
+     * The amount of the transaction.
+     */
     private int amount;
+
+    /**
+     * The fee associated with the transaction.
+     */
     private int fee;
     
 
