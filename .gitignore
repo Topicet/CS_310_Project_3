@@ -12,3 +12,8 @@ code_template/Transaction.class
 code_template/Utilities.class
 code_template/P3.class
 transactions_example____sender_receiver_amount_feeBACKUP.txt
+code_template/checkstyle.jar
+.gitignore
+code_template/cs310comments.xml
+code_template/cs310code.xml
+code_template/junit-4.11.jar

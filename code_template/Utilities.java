@@ -4,14 +4,20 @@ import java.util.Scanner;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Utility class for various operations, including reading transactions from a file, verifying transactions using Merkle proofs,
+ * and cryptographic hash functions.
+ */
 public final class Utilities
 {
     /**
-        Reads the transactions from a text file and adds them to a priority queue
-        @param pgmFile is the filename of the text file
-
-        TIME COMPLEXITY REQUIREMENT: O(N^2) # it includes the time-compexity for calling the enqueue method
-    */
+     * Reads the transactions from a text file and adds them to a priority queue.
+     *
+     * @param pgmFile is the filename of the text file.
+     * @return a PriorityLine containing the transactions.
+     *
+     * @TimeComplexityRequirement O(N^2).
+     */
     public static PriorityLine<Transaction> loadTransactions(String pgmFile)
     {
         PriorityLine<Transaction> priorityLine = new PriorityLine<>();
@@ -19,37 +25,39 @@ public final class Utilities
         try{
             File file = new File(pgmFile);
             Scanner scanner = new Scanner(file);
-
-
-            //Read the file
+    
+            // Read the file line by line
             while(scanner.hasNextLine()){
-                String line = scanner.nextLine();
+                String line = scanner.nextLine().trim();
                 String[] transactionInfo = line.split(" ");
-
-                //Store the transaction information.
+    
+                // Store the transaction information.
                 String sender = transactionInfo[0];
-                String reciever = transactionInfo[1];
+                String receiver = transactionInfo[1];
                 int amount = Integer.parseInt(transactionInfo[2]);
                 int fee = Integer.parseInt(transactionInfo[3]);
-
-                Transaction newTransaction = new Transaction(sender, reciever, amount, fee);
-
+    
+                Transaction newTransaction = new Transaction(sender, receiver, amount, fee);
+    
                 priorityLine.enqueue(newTransaction);
             }
-
+    
             scanner.close();
         }
-        catch(FileNotFoundException e){
-            e.printStackTrace();
+        catch(FileNotFoundException e){            
+            System.out.printf("Desired file %f not found!", pgmFile);
+            return null;
         }
-
+    
         return priorityLine;
     }
-
+    
     /**
-        @param t is the transaction that we want to verify it's contained in a certain block
-        @param blockRootHash is the root hash code stored in the respective block
+        Verifies if a transaction is contained in a certain block using a Merkle proof.
+        
+        @param t is the transaction that we want to verify its presence in the block
         @param proof is the list of hashes extracted with the method extractProof
+        @param blockRootHash is the root hash code stored in the respective block
         @return true if the transaction is verified, false otherwise
         
         TIME COMPLEXITY REQUIREMENT: O(logN)
@@ -57,24 +65,26 @@ public final class Utilities
     public static boolean verifyTransaction(Transaction t, SinglyLinkedList<String> proof, String blockRootHash)
     {
         String transactionHash = cryptographicHashFunction(t.toString());
-
-        //Reconstruct the merkle tree
+    
+        // Reconstruct the Merkle tree using the proof
         for(String proofHash : proof){
             String totalHash = cryptographicHashFunction(transactionHash, proofHash);
             transactionHash = totalHash;
         }
                 
         return transactionHash.equals(blockRootHash);
-
     }
 
-    /**
-    **************************** DO NOT EDIT BELOW THIS LINE **************************************
-    */
+
+    //**************************** DO NOT EDIT BELOW THIS LINE **************************************
+  
 
     /**
-        SHA-256 cryptographic hash function for a single input
-    */
+     * Calculates the SHA-256 cryptographic hash for a given input string.
+     *
+     * @param input is the input string for which the hash will be calculated.
+     * @return a hexadecimal string representing the SHA-256 hash of the input.
+     */
     public static String cryptographicHashFunction(String input)
     {
         StringBuilder hexString = null;
@@ -102,9 +112,13 @@ public final class Utilities
     }
 
     /**
-        SHA-256 cryptographic hash function for a pair of inputs
-        It uses the XOR bitwise operator to merge the two hash codes
-    */
+     * Calculates the SHA-256 cryptographic hash for a pair of input strings.
+     * It uses the XOR bitwise operation to merge the two hash codes.
+     *
+     * @param input1 is the first input string for hash calculation.
+     * @param input2 is the second input string for hash calculation.
+     * @return a hexadecimal string representing the SHA-256 hash of the combined inputs.
+     */
     public static String cryptographicHashFunction(String input1, String input2)
     {
         StringBuilder hexString = null;
