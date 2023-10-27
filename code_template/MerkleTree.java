@@ -1,56 +1,98 @@
 import java.util.Iterator;
 
 /**
-    - Represents the Merkle Tree of a single Block
-    - You must implement all the public methods in this template
-    - Anything else you add must be private
-    - Do not modify the provided signatures
+    - Represents the Merkle Tree of a single Block.
+    - You must implement all the public methods in this template.
+    - Anything else you add must be private.
+    - Do not modify the provided signatures.
 */
-
 public class MerkleTree
 {
+    /**
+     * Reference to the root node.
+     */
+    private Node root;
 
-    private Node root; // Reference to the root node
-    private int height; // Height of the tree
-    private int innerNodes; // Number of inner nodes
+    /**
+     *  Height of the tree.
+     */
+    private int height;
 
-    private static class Node implements Comparable<Node>  {
-        String hashCode; // The hash code stored in this node
-        Node left; // Left child
-        Node right; // Right child
+    /**
+     * Number of inner nodes.
+     */
+    private int innerNodes;
 
+    /**
+     * A node in a binary tree used for constructing a Merkle tree. Each node stores a hash code
+     * and has references to its left and right children.
+     */
+    private static class Node implements Comparable<Node> {
+        /**
+         * The hash code stored in this node.
+         */
+        String hashCode;
+
+        /**
+         * The left child node.
+         */
+        Node left;
+
+        /**
+         * The right child node.
+         */
+        Node right;
+    
+        /**
+         * Constructs a Node with the specified hash code and initializes its left and right children to null.
+         *
+         * @param hashCode The hash code to be stored in this node.
+         */
         Node(String hashCode) {
             this.hashCode = hashCode;
             this.left = null;
             this.right = null;
         }
-
+    
+        /**
+         * Compares this node's hash code with another node's hash code for ordering.
+         *
+         * @param other The node to compare to.
+         * @return A negative integer, zero, or a positive integer as this node's hash code
+         *         is less than, equal to, or greater than the other node's hash code.
+         */
         public int compareTo(Node other) {
             return this.hashCode.compareTo(other.hashCode);
         }
     }
 
     /**
-        @param block is the Block that the Merkle Tree will be created for        
         - The constructor first creates the Merkle Tree in memory. This MUST be done recursively; zero points if it's not recursive!        
-        - You MUST maintain a pointer to the root because the tree is built only once but it's needed many times (e.g. for traversals)
-        - After the tree is constructed, the constructor sends the hash of the root to the block object by invoking the block.setRootHash() method
-        TIME COMPLEXITY REQUIREMENT: O(N)
-        SPACE COMPLEXITY REQUIREMENT: O(N)        
+        - You MUST maintain a pointer to the root because the tree is built only once but it's needed many times (e.g. for traversals).
+        - After the tree is constructed, the constructor sends the hash of the root to the block object by invoking the block.setRootHash() method.
+        @param block is the Block that the Merkle Tree will be created for.
+        TIME COMPLEXITY REQUIREMENT: O(N).
+        SPACE COMPLEXITY REQUIREMENT: O(N).
     */
     public MerkleTree(Block block)
     {
-            // Initialize innerNodes and height
-            this.innerNodes = 0;
-            this.height = 0;
-    
-            // Create the Merkle Tree and set the root
-            this.root = buildTree(block);
-    
-            // Set the root hash for the block
-            block.setRootHash(this.root.hashCode);
+        // Initialize innerNodes and height
+        this.innerNodes = 0;
+        this.height = 0;
+
+        // Create the Merkle Tree and set the root
+        this.root = buildTree(block);
+
+        // Set the root hash for the block
+        block.setRootHash(this.root.hashCode);
     }
 
+    /**
+     * Builds a Merkle tree from the transactions in the given block.
+     *
+     * @param block The block containing the transactions to build the tree from.
+     * @return The root node of the Merkle tree.
+     */
     private Node buildTree(Block block) {
         Iterator<Transaction> iter = block.iterator();
         int numOfTransactions = block.numOfTransactions();
@@ -62,6 +104,13 @@ public class MerkleTree
         return buildTreeHelper(iter, numOfTransactions, nextPowerOfTwo);
     }
 
+    /**
+     * Recursively builds the Merkle tree structure for a given set of transactions.
+     * @param iter                 An iterator over the transactions.
+     * @param remainingTransactions The number of remaining transactions to process.
+     * @param totalNodes           The total number of nodes to build in the subtree.
+     * @return The root node of the subtree representing the Merkle tree.
+     */
     private Node buildTreeHelper(Iterator<Transaction> iter, int remainingTransactions, int totalNodes) {
         if (totalNodes == 1) {
             String hashCode;
@@ -97,7 +146,12 @@ public class MerkleTree
         return parent;
     }
     
-    // Function to find the next power of two greater than or equal to n
+    /**
+     * Calculates the next power of two greater than or equal to a given integer.
+     *
+     * @param n The input integer.
+     * @return The next power of two greater than or equal to the input integer.
+     */
     private int nextPowerOfTwo(int n) {
         int count = 0;
     
@@ -114,8 +168,9 @@ public class MerkleTree
     }
 
     /**
-        @return the height of the tree
-        TIME COMPLEXITY REQUIREMENT: O(1)
+        Returns the height of the tree.
+        @return the height of the tree.
+        TIME COMPLEXITY REQUIREMENT: O(1).
     */
     public int height()
     {
@@ -123,8 +178,9 @@ public class MerkleTree
     }
 
     /**
-        @return the number of inner nodes in the tree
-        TIME COMPLEXITY REQUIREMENT: O(1)
+        Returns the number of inner nodes.
+        @return the number of inner nodes in the tree.
+        TIME COMPLEXITY REQUIREMENT: O(1).
     */
     public int innerNodes()
     {
@@ -132,8 +188,9 @@ public class MerkleTree
     }
 
     /**
-        @return a list of the hash codes contained in the tree by walking the tree in a level-order
-        TIME COMPLEXITY REQUIREMENT: O(N)
+        Traverses the tree breadth first and returns the hash codes respectively.
+        @return a list of the hash codes contained in the tree by walking the tree in a level-order.
+        TIME COMPLEXITY REQUIREMENT: O(N).
     */
     public SinglyLinkedList<String> breadthFirstTraversal() {
         SinglyLinkedList<String> hashCodes = new SinglyLinkedList<>();
@@ -160,8 +217,9 @@ public class MerkleTree
     }
 
     /**
-        @return a list of the hash codes contained in the tree by walking the tree in a certain order        
-        @param order is an enumeration representing the three possible depth-first traversals        
+        Traverses the tree depth first and returns the hash codes respectively.
+        @param order is an enumeration representing the three possible depth-first traversals   
+        @return a list of the hash codes contained in the tree by walking the tree in a certain order             
         You MUST use recursion for this method; zero points if it's not recursive!
         TIME COMPLEXITY REQUIREMENT: O(N)
     */
@@ -171,6 +229,15 @@ public class MerkleTree
         return hashCodes;
     }
     
+    /**
+     * Performs a depth-first traversal of the binary tree starting from the given node and
+     * appends the hash codes of nodes to the provided singly-linked list based on the specified order.
+     *
+     * @param node  The starting node for the traversal.
+     * @param list  The singly-linked list where hash codes are appended.
+     * @param order The order in which nodes are visited (PREORDER, INORDER, POSTORDER).
+     * 
+     */
     private void depthFirstTraversalHelper(Node node, SinglyLinkedList<String> list, Order order) {
         if (node == null) {
             return;
@@ -196,13 +263,12 @@ public class MerkleTree
     }
 
     /**
-        @return a list of the hash codes that are required to prove that a transaction is contained in the block that this Merkle Tree encodes.
         In the example depicted in Figure 4 of the project description, the content of this list would be [F] -> [L] -> [M]
         The head of the list is the deepest hash code and the tail of the list is the top-most hash code required for the proof.
         The root hash code must NOT be added to this list because it's already stored inside each Block
-        
+        @param t The transaction we want to verify exists within the merkle tree.
+        @return a list of the hash codes that are required to prove that a transaction is contained in the block that this Merkle Tree encodes.        
         You MUST use recursion for this method; zero points if it's not recursive!
-
         TIME COMPLEXITY REQUIREMENT: O(N)
     */
     public SinglyLinkedList<String> extractProof(Transaction t) {
@@ -210,9 +276,16 @@ public class MerkleTree
         extractProofHelper(root, Utilities.cryptographicHashFunction(t.toString()), proofList);
         return proofList;
     }
-    
-    String hashCodeLeft = "";
-    String hashCodeRight = "";
+
+    /**
+     * Recursively searches for a transaction hash in the binary tree starting from the given node.
+     * If found, it adds the hash codes of sibling nodes along the path to the provided singly-linked list as a Merkle proof.
+     *
+     * @param node            The starting node for the search.
+     * @param transactionHash The hash code of the transaction to search for.
+     * @param proofList       The singly-linked list where sibling hash codes are added as proof.
+     * @return True if the transaction hash is found, false otherwise.
+     */
     private boolean extractProofHelper(Node node, String transactionHash, SinglyLinkedList<String> proofList) {
         if (node == null) {
             return false;
