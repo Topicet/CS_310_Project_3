@@ -11,6 +11,9 @@ import java.util.Iterator;
 public class PriorityLine<T extends Comparable<T>> implements Iterable<T>
 {
 
+    /**
+     * The queue that defines the Priority Line priority queue.
+     */
     private SinglyLinkedList<T> priorityQueue;
 
 
