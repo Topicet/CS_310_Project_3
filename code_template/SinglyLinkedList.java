@@ -5,23 +5,52 @@ import java.util.Iterator;
     - You must implement all the public methods in this template plus the method(s) required by the Iterable interface
     - Anything else you add must be private
     - Do not modify the provided signatures
+    @param <T> The generic type that defines this singlyLinkedList.
 */
 public class SinglyLinkedList<T extends Comparable<T>> implements Iterable<T>
 {
 
+    /**
+     * The head of the singly linked list, pointing to the first element.
+     */
     private Node head;
+
+    /**
+     * The tail of the singly linked list, pointing to the last element.
+     */
     private Node tail;
+
+    /**
+     * The number of elements in the singly linked list.
+     */
     private int size;
 
+    /**
+     * Represents a node in the singly linked list.
+     */
     private class Node {
+        /**
+         * Generic value that the node will store.
+         */
         T value;
+
+        /**
+         * The next node in the singlyLinkedList connection.
+         */
         Node next;
 
+        /**
+         * Given a node a specified generic value.
+         * @param value The value desired.
+         */
         Node(T value){
             this.value = value;
         }
     }
 
+    /**
+     * Constructs an empty singly linked list.
+     */
     public SinglyLinkedList()
     {
         this.head = null;
