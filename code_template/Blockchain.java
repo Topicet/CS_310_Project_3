@@ -31,7 +31,7 @@ public class Blockchain implements Iterable<Block>
             cumulativeFees += currentTransaction.getFee();
             currentBlockTransactions.addTransaction(currentTransaction);
     
-            if (cumulativeFees >= threshold) {
+            if (cumulativeFees >= threshold || queue.peek() == null) {
                 blockchainList.add(currentBlockTransactions);
     
                 // Reset for next block

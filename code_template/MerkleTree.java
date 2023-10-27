@@ -1,7 +1,5 @@
 import java.util.Iterator;
 
-import org.w3c.dom.Node;
-
 /**
     - Represents the Merkle Tree of a single Block
     - You must implement all the public methods in this template
@@ -55,32 +53,41 @@ public class MerkleTree
 
     private Node buildTree(Block block) {
         Iterator<Transaction> iter = block.iterator();
-        return buildTreeHelper(iter, block.numOfTransactions());
+        int numOfTransactions = block.numOfTransactions();
+        int nextPowerOfTwo = nextPowerOfTwo(numOfTransactions);
+
+        //Quick bit manipulation to calculate the height of tree.
+        this.height = 31 - Integer.numberOfLeadingZeros(nextPowerOfTwo); 
+
+        return buildTreeHelper(iter, numOfTransactions, nextPowerOfTwo);
     }
 
-    private Node buildTreeHelper(Iterator<Transaction> iter, int size) {
-        if (size == 1) {
+    private Node buildTreeHelper(Iterator<Transaction> iter, int remainingTransactions, int totalNodes) {
+        if (totalNodes == 1) {
             String hashCode;
-            if(iter.hasNext()) {
+            if (remainingTransactions > 0 && iter.hasNext()) {
                 Transaction transaction = iter.next();
                 hashCode = Utilities.cryptographicHashFunction(transaction.toString());
             } else {
-                // Use "DUMMY" hash for padding
                 hashCode = Utilities.cryptographicHashFunction("DUMMY");
             }
             return new Node(hashCode);
-        }
+        }        
     
-        this.height++;
+        int halfNodes = totalNodes / 2;
     
-        int nextPowOfTwo = nextPowerOfTwo(size);  // Function to find the next power of two
-        int halfSize = nextPowOfTwo / 2;
+        // Calculate how many real transactions should go to the left subtree
+        int leftTransactions = Math.min(halfNodes, remainingTransactions);
     
-        Node left = buildTreeHelper(iter, Math.min(halfSize, size));
-        Node right = buildTreeHelper(iter, Math.min(halfSize, size - halfSize));
+        // The rest go to the right subtree
+        int rightTransactions = remainingTransactions - leftTransactions;
+    
+        Node left = buildTreeHelper(iter, leftTransactions, halfNodes);
+        Node right = buildTreeHelper(iter, rightTransactions, halfNodes);
     
         String combinedHashCode = Utilities.cryptographicHashFunction(left.hashCode, right.hashCode);
     
+        
         Node parent = new Node(combinedHashCode);
         parent.left = left;
         parent.right = right;
@@ -200,33 +207,37 @@ public class MerkleTree
     */
     public SinglyLinkedList<String> extractProof(Transaction t) {
         SinglyLinkedList<String> proofList = new SinglyLinkedList<>();
-        extractProofHelper(root, t.toString(), proofList);
+        extractProofHelper(root, Utilities.cryptographicHashFunction(t.toString()), proofList);
         return proofList;
     }
     
+    String hashCodeLeft = "";
+    String hashCodeRight = "";
     private boolean extractProofHelper(Node node, String transactionHash, SinglyLinkedList<String> proofList) {
         if (node == null) {
             return false;
         }
-        
+    
         if (node.hashCode.equals(transactionHash)) {
             return true;
         }
-        
+    
+        // Check the left subtree first
         if (extractProofHelper(node.left, transactionHash, proofList)) {
             if (node.right != null) {
                 proofList.add(node.right.hashCode);
             }
             return true;
         }
-        
+    
+        // If not found in the left, check the right subtree
         if (extractProofHelper(node.right, transactionHash, proofList)) {
             if (node.left != null) {
                 proofList.add(node.left.hashCode);
             }
             return true;
         }
-        
+    
         return false;
     }
 

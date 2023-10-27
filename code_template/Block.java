@@ -1,7 +1,5 @@
 import java.util.Iterator;
 
-import javax.swing.SingleSelectionModel;
-
 /**
     - Represents a single block in the blockchain
     - You must implement all the public methods in this template plus the methods required by the Comparable and Iterable interfaces

@@ -60,9 +60,8 @@ public final class Utilities
 
         //Reconstruct the merkle tree
         for(String proofHash : proof){
-            String totalHash = transactionHash + proofHash;
-
-            transactionHash = cryptographicHashFunction(totalHash);
+            String totalHash = cryptographicHashFunction(transactionHash, proofHash);
+            transactionHash = totalHash;
         }
                 
         return transactionHash.equals(blockRootHash);
